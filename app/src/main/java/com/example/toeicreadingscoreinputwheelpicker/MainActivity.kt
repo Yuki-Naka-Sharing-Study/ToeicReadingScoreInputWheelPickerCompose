@@ -21,6 +21,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,9 +49,15 @@ class MainActivity : ComponentActivity() {
 fun ReadingScoreScreen() {
     Column {
         var readingScore by rememberSaveable { mutableIntStateOf(0) }
-        var showReadingPicker by remember { mutableStateOf(false) }
+        var selectedScore by remember { mutableIntStateOf(readingScore) }
 
-        ReadingScorePicker(Modifier, readingScore, onScoreChange = { showReadingPicker = true})
+        ReadingScorePicker(
+            Modifier,
+            readingScore = readingScore,
+            selectedScore = selectedScore,
+            onScoreChange = { selectedScore = it },
+            onConfirm = { readingScore = selectedScore }
+        )
     }
 }
 
@@ -58,7 +65,9 @@ fun ReadingScoreScreen() {
 fun ReadingScorePicker(
     modifier: Modifier = Modifier,
     readingScore: Int,
-    onScoreChange: (Int) -> Unit
+    selectedScore: Int,
+    onScoreChange: (Int) -> Unit,
+    onConfirm: () -> Unit
 ) {
     var showDialog by remember { mutableStateOf(false) }
 
@@ -81,7 +90,7 @@ fun ReadingScorePicker(
     if (showDialog) {
         Dialog(onDismissRequest = { showDialog = false }) {
             Card(
-                colors = CardDefaults.cardColors(containerColor = androidx.compose.ui.graphics.Color.Companion.LightGray),
+                colors = CardDefaults.cardColors(containerColor = androidx.compose.ui.graphics.Color.LightGray),
                 modifier = Modifier
                     .size(width = 240.dp, height = 280.dp)
             ) {
@@ -93,15 +102,19 @@ fun ReadingScorePicker(
                 ) {
                     // スコア選択のWheel Picker
                     ReadingScorePickerView(
-                        score = readingScore,
+                        score = selectedScore,
                         onScoreChange = onScoreChange
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // 確定ボタン
                     Button(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
-                        onClick = { showDialog = false },
+                        onClick = {
+                            onConfirm() // 確定時にスコアを親に渡す
+                            showDialog = false
+                        },
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(androidx.compose.ui.graphics.Color.Green),
                     ) {
@@ -130,7 +143,7 @@ fun ReadingScorePickerView(
     val tenState = remember { mutableIntStateOf(tens) }
     val oneState = remember { mutableIntStateOf(ones) }
 
-    // スコア変更をトリガーするLaunchedEffect
+    // スコア変更をトリガーする
     LaunchedEffect(hundredState.intValue, tenState.intValue, oneState.intValue) {
         onScoreChange(hundredState.intValue * 100 + tenState.intValue * 10 + oneState.intValue)
     }
@@ -141,67 +154,61 @@ fun ReadingScorePickerView(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 100の位
-        ThreeDigits()
+        ThreeDigits(hundredState)
         // 10の位
-        TwoDigits()
+        TwoDigits(tenState)
         // 1の位
-        OneDigit()
+        OneDigit(oneState)
     }
 }
 
 @Composable
-private fun ThreeDigits() {
+private fun ThreeDigits(state: MutableIntState) {
     FVerticalWheelPicker(
         modifier = Modifier.width(64.dp),
-        // Set item count.
         count = 5,
-        // Set item height.
         itemHeight = 48.dp,
-        // Set unfocused count.
         unfocusedCount = 3,
     ) { index ->
         Text(
             index.toString(),
             color = androidx.compose.ui.graphics.Color.Black
         )
+        state.intValue = index
     }
 }
 
 @Composable
-private fun TwoDigits() {
+private fun TwoDigits(state: MutableIntState) {
     FVerticalWheelPicker(
         modifier = Modifier.width(64.dp),
-        // Set item count.
         count = 10,
-        // Set item height.
         itemHeight = 48.dp,
-        // Set unfocused count.
         unfocusedCount = 3,
     ) { index ->
         Text(
             index.toString(),
             color = androidx.compose.ui.graphics.Color.Black
         )
+        state.intValue = index
     }
 }
 
 // 三桁目の数字は0か5のみしか入力不可
 @Composable
-private fun OneDigit() {
+private fun OneDigit(state: MutableIntState) {
     val items = listOf(0, 5)
 
     FVerticalWheelPicker(
         modifier = Modifier.width(64.dp),
-        // Set item count.
         count = items.size,
-        // Set item height.
         itemHeight = 48.dp,
-        // Set unfocused count.
         unfocusedCount = 3,
     ) { index ->
         Text(
             items[index].toString(),
             color = androidx.compose.ui.graphics.Color.Black
         )
+        state.intValue = items[index]
     }
 }
