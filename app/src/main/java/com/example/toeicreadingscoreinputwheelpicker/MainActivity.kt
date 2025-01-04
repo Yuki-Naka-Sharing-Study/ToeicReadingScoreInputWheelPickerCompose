@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -124,18 +125,14 @@ fun ReadingScorePickerView(
     val tens = (score % 100) / 10 // 10の位
     val ones = score % 10 // 1の位
 
-    val hundredOptions = listOf(0, 5) // 1桁目（100の位）は0か5
-    val tenOptions = (0..9).toList() // 2桁目（10の位）は0～9
-    val oneOptions = (0..4).toList() // 3桁目（1の位）は0～4
-
     // 状態管理のためにrememberを使う
-    val hundredState = remember { mutableStateOf(hundreds) }
-    val tenState = remember { mutableStateOf(tens) }
-    val oneState = remember { mutableStateOf(ones) }
+    val hundredState = remember { mutableIntStateOf(hundreds) }
+    val tenState = remember { mutableIntStateOf(tens) }
+    val oneState = remember { mutableIntStateOf(ones) }
 
     // スコア変更をトリガーするLaunchedEffect
-    LaunchedEffect(hundredState.value, tenState.value, oneState.value) {
-        onScoreChange(hundredState.value * 100 + tenState.value * 10 + oneState.value)
+    LaunchedEffect(hundredState.intValue, tenState.intValue, oneState.intValue) {
+        onScoreChange(hundredState.intValue * 100 + tenState.intValue * 10 + oneState.intValue)
     }
 
     Row(
@@ -144,56 +141,67 @@ fun ReadingScorePickerView(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 100の位
-        FVerticalWheelPicker(
-            modifier = Modifier.weight(1f),
-            options = hundredOptions,
-            currentValue = hundredState.value,
-            onValueChange = { hundredState.value = it }
-        ) { value ->
-            Text(text = value.toString())
-        }
-
+        ThreeDigits()
         // 10の位
-        FVerticalWheelPicker(
-            modifier = Modifier.weight(1f),
-            options = tenOptions,
-            currentValue = tenState.value,
-            onValueChange = { tenState.value = it }
-        ) { value ->
-            Text(text = value.toString())
-        }
-
+        TwoDigits()
         // 1の位
-        FVerticalWheelPicker(
-            modifier = Modifier.weight(1f),
-            options = oneOptions,
-            currentValue = oneState.value,
-            onValueChange = { oneState.value = it }
-        ) { value ->
-            Text(text = value.toString())
-        }
+        OneDigit()
     }
 }
 
 @Composable
-fun FVerticalWheelPicker(
-    modifier: Modifier = Modifier,
-    options: List<Int>,
-    currentValue: Int,
-    onValueChange: (Int) -> Unit,
-    content: @Composable (Int) -> Unit
-) {
-    val state = remember { mutableStateOf(currentValue) }
+private fun ThreeDigits() {
+    FVerticalWheelPicker(
+        modifier = Modifier.width(64.dp),
+        // Set item count.
+        count = 5,
+        // Set item height.
+        itemHeight = 48.dp,
+        // Set unfocused count.
+        unfocusedCount = 3,
+    ) { index ->
+        Text(
+            index.toString(),
+            color = androidx.compose.ui.graphics.Color.Black
+        )
+    }
+}
 
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // WheelPicker表示
-        val selectedValue = options[state.value]
-        content(selectedValue)
+@Composable
+private fun TwoDigits() {
+    FVerticalWheelPicker(
+        modifier = Modifier.width(64.dp),
+        // Set item count.
+        count = 10,
+        // Set item height.
+        itemHeight = 48.dp,
+        // Set unfocused count.
+        unfocusedCount = 3,
+    ) { index ->
+        Text(
+            index.toString(),
+            color = androidx.compose.ui.graphics.Color.Black
+        )
+    }
+}
 
-        // 変更時に新しい値を設定
-        onValueChange(selectedValue)
+// 三桁目の数字は0か5のみしか入力不可
+@Composable
+private fun OneDigit() {
+    val items = listOf(0, 5)
+
+    FVerticalWheelPicker(
+        modifier = Modifier.width(64.dp),
+        // Set item count.
+        count = items.size,
+        // Set item height.
+        itemHeight = 48.dp,
+        // Set unfocused count.
+        unfocusedCount = 3,
+    ) { index ->
+        Text(
+            items[index].toString(),
+            color = androidx.compose.ui.graphics.Color.Black
+        )
     }
 }
