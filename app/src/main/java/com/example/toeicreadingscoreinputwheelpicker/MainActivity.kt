@@ -171,7 +171,7 @@ private fun ThreeDigits(state: MutableIntState) {
         modifier = Modifier.width(64.dp),
         count = 5,
         itemHeight = 48.dp,
-        unfocusedCount = 3,
+        unfocusedCount = 2,
     ) { index ->
         Text(
             index.toString(),
@@ -187,7 +187,7 @@ private fun TwoDigits(state: MutableIntState) {
         modifier = Modifier.width(64.dp),
         count = 10,
         itemHeight = 48.dp,
-        unfocusedCount = 3,
+        unfocusedCount = 2,
     ) { index ->
         Text(
             index.toString(),
@@ -206,7 +206,7 @@ private fun OneDigit(state: MutableIntState) {
         modifier = Modifier.width(64.dp),
         count = items.size,
         itemHeight = 48.dp,
-        unfocusedCount = 3,
+        unfocusedCount = 2,
     ) { index ->
         Text(
             items[index].toString(),
