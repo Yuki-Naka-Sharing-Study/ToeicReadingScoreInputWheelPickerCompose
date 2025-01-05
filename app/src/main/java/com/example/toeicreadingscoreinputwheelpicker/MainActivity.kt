@@ -135,7 +135,6 @@ fun ReadingScorePickerView(
     score: Int,
     onScoreChange: (Int) -> Unit
 ) {
-    // おそらく以下の変数から「LaunchedEffect」までが原因の可能性。
     val hundred = score / 100 // 100の位
     val ten = (score % 100) / 10 // 10の位
     val one = score % 10 // 1の位
