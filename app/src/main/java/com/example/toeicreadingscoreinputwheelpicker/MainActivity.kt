@@ -136,14 +136,15 @@ fun ReadingScorePickerView(
     score: Int,
     onScoreChange: (Int) -> Unit
 ) {
+    // おそらく以下の変数から「LaunchedEffect」までが原因の可能性。
     val hundreds = score / 100 // 100の位
     val tens = (score % 100) / 10 // 10の位
     val ones = score % 10 // 1の位
 
     // 状態管理のためにrememberを使う
-    val hundredState = remember { mutableIntStateOf(hundreds) }
-    val tenState = remember { mutableIntStateOf(tens) }
-    val oneState = remember { mutableIntStateOf(ones) }
+    val hundredState = rememberSaveable { mutableIntStateOf(hundreds) }
+    val tenState = rememberSaveable { mutableIntStateOf(tens) }
+    val oneState = rememberSaveable { mutableIntStateOf(ones) }
 
     // スコア変更をトリガーする
     LaunchedEffect(hundredState.intValue, tenState.intValue, oneState.intValue) {
