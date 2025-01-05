@@ -80,7 +80,7 @@ fun ReadingScorePicker(
             colors = ButtonDefaults.buttonColors(androidx.compose.ui.graphics.Color.Green),
         ) {
             Text(
-                text = "TOEIC Readingスコア: $readingScore",
+                text = "スコア: $readingScore",
                 color = androidx.compose.ui.graphics.Color.White
             )
         }
@@ -92,7 +92,7 @@ fun ReadingScorePicker(
             Card(
                 colors = CardDefaults.cardColors(containerColor = androidx.compose.ui.graphics.Color.LightGray),
                 modifier = Modifier
-                    .size(width = 240.dp, height = 280.dp)
+                    .size(width = 240.dp, height = 320.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -106,7 +106,7 @@ fun ReadingScorePicker(
                         onScoreChange = onScoreChange
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     // 確定ボタン
                     Button(
@@ -123,6 +123,8 @@ fun ReadingScorePicker(
                             color = androidx.compose.ui.graphics.Color.White
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
@@ -150,7 +152,8 @@ fun ReadingScorePickerView(
 
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement
+            .SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 100の位
