@@ -69,7 +69,7 @@ fun ReadingScorePicker(
     onScoreChange: (Int) -> Unit,
     onConfirm: () -> Unit
 ) {
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialog by rememberSaveable { mutableStateOf(false) }
 
     Box(modifier = modifier) {
         // スコア入力ボタン
