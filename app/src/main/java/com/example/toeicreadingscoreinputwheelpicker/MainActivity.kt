@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
 fun ReadingScoreScreen() {
     Column {
         var readingScore by rememberSaveable { mutableIntStateOf(0) }
-        var selectedScore by remember { mutableIntStateOf(readingScore) }
+        var selectedScore by rememberSaveable { mutableIntStateOf(readingScore) }
 
         ReadingScorePicker(
             Modifier,
