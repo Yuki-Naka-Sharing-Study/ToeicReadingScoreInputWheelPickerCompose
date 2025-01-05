@@ -25,7 +25,6 @@ import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -138,13 +137,13 @@ fun ReadingScorePickerView(
 ) {
     // おそらく以下の変数から「LaunchedEffect」までが原因の可能性。
     val hundreds = score / 100 // 100の位
-    val tens = (score % 100) / 10 // 10の位
-    val ones = score % 10 // 1の位
+    val ten = (score % 100) / 10 // 10の位
+    val one = score % 10 // 1の位
 
     // 状態管理のためにrememberを使う
     val hundredState = rememberSaveable { mutableIntStateOf(hundreds) }
-    val tenState = rememberSaveable { mutableIntStateOf(tens) }
-    val oneState = rememberSaveable { mutableIntStateOf(ones) }
+    val tenState = rememberSaveable { mutableIntStateOf(ten) }
+    val oneState = rememberSaveable { mutableIntStateOf(one) }
 
     // スコア変更をトリガーする
     LaunchedEffect(hundredState.intValue, tenState.intValue, oneState.intValue) {
