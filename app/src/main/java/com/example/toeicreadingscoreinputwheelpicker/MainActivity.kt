@@ -132,7 +132,7 @@ fun ReadingScorePicker(
 
 @Composable
 fun ReadingScorePickerView(
-    score: Int,
+    score: Int = 0,
     onScoreChange: (Int) -> Unit
 ) {
     val hundred = score / 100 // 100の位
@@ -166,33 +166,49 @@ fun ReadingScorePickerView(
 
 @Composable
 private fun ThreeDigits(state: MutableIntState) {
+    // FWheelPickerStateを利用してスクロール状態を管理
+    val listState = rememberFWheelPickerState()
+
+    // currentIndex の変化を監視
+    LaunchedEffect(listState.currentIndex) {
+        // listState.currentIndex が変わったときに state.intValue を更新
+        state.intValue = listState.currentIndex
+    }
     FVerticalWheelPicker(
         modifier = Modifier.width(64.dp),
         count = 5,
         itemHeight = 48.dp,
         unfocusedCount = 2,
+        state = listState,
     ) { index ->
         Text(
             index.toString(),
             color = androidx.compose.ui.graphics.Color.Black
         )
-        state.intValue = index
     }
 }
 
 @Composable
 private fun TwoDigits(state: MutableIntState) {
+    // FWheelPickerStateを利用してスクロール状態を管理
+    val listState = rememberFWheelPickerState()
+
+    // currentIndex の変化を監視
+    LaunchedEffect(listState.currentIndex) {
+        // listState.currentIndex が変わったときに state.intValue を更新
+        state.intValue = listState.currentIndex
+    }
     FVerticalWheelPicker(
         modifier = Modifier.width(64.dp),
-        count = 10,
+        count = 5,
         itemHeight = 48.dp,
         unfocusedCount = 2,
+        state = listState,
     ) { index ->
         Text(
             index.toString(),
             color = androidx.compose.ui.graphics.Color.Black
         )
-        state.intValue = index
     }
 }
 
@@ -201,16 +217,25 @@ private fun TwoDigits(state: MutableIntState) {
 private fun OneDigit(state: MutableIntState) {
     val items = listOf(0, 5)
 
+    // FWheelPickerStateを利用してスクロール状態を管理
+    val listState = rememberFWheelPickerState()
+    // currentIndex の変化を監視
+    LaunchedEffect(listState.currentIndex) {
+        // currentIndex が items のサイズを超えないことを確認
+        val currentItemIndex = listState.currentIndex.coerceIn(0, items.size - 1)
+        // listState.currentIndex が変わったときに state.intValue を更新
+        state.intValue = items[currentItemIndex]
+    }
     FVerticalWheelPicker(
         modifier = Modifier.width(64.dp),
         count = items.size,
         itemHeight = 48.dp,
         unfocusedCount = 2,
+        state = listState,
     ) { index ->
         Text(
             items[index].toString(),
             color = androidx.compose.ui.graphics.Color.Black
         )
-        state.intValue = items[index]
     }
 }
